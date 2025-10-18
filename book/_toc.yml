@@ -7,6 +7,27 @@ parts:
     - file: some_content/overview.md
       sections:
       - file: some_content/text_and_code.ipynb
+  - caption: Python para TIF
+    chapters:
+    - file: tif_python/instalacion-vscode.md
+    - file: tif_python/tema-01/teoria.md
+      sections:
+      - file: tif_python/tema-01/ejercicios.md
+    - file: tif_python/tema-02/teoria.md
+      sections:
+      - file: tif_python/tema-02/ejercicios.md
+    - file: tif_python/tema-03/teoria.md
+      sections:
+      - file: tif_python/tema-03/ejercicios.md
+    - file: tif_python/tema-04/teoria.md
+      sections:
+      - file: tif_python/tema-04/ejercicios.md
+    - file: tif_python/tema-05/teoria.md
+      sections:
+      - file: tif_python/tema-05/ejercicios.md
+    - file: tif_python/tema-06/teoria.md
+      sections:
+      - file: tif_python/tema-06/ejercicios.md
   - caption: Exercises
     chapters:
     - file: exercises.md

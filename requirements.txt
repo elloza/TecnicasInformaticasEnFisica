@@ -3,3 +3,19 @@ teachbooks # depends on jupyter-book
 
 # Our favourite Sphinx extensions in one line, replace with individual extensions if you prefer some extensions not to be included (https://github.com/TeachBooks/TeachBooks-Favourites)
 git+https://github.com/TeachBooks/TeachBooks-Favourites
+
+# Document conversion tools
+docling>=2.0.0
+docling-core>=2.0.0
+pathlib
+
+# GPU Support for Docling (PyTorch with CUDA)
+# Install PyTorch with CUDA 12.1 support for faster document processing
+# See: https://pytorch.org/get-started/locally/
+torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu126
+torchvision --index-url https://download.pytorch.org/whl/cu126
+torchaudio --index-url https://download.pytorch.org/whl/cu126
+
+# Optional: TensorFlow with GPU support (alternative to PyTorch)
+# Uncomment to use TensorFlow instead of/in addition to PyTorch
+# tensorflow[and-cuda]>=2.14.0
