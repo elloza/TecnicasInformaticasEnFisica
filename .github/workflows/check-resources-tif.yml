@@ -1,0 +1,91 @@
+name: Pre-Commit Check — resources_tif/ Exclusion
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  check-resources-tif:
+    name: Verify resources_tif/ not committed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history to check all commits
+
+      - name: Get changed files in PR
+        id: changed-files
+        if: github.event_name == 'pull_request'
+        uses: tj-actions/changed-files@v40
+        with:
+          files: |
+            resources_tif/**
+
+      - name: Check for resources_tif/ in commits (push to main)
+        if: github.event_name == 'push'
+        run: |
+          echo "🔍 Checking for resources_tif/ in recent commits..."
+          
+          # Get the list of changed files since last tag or last 10 commits
+          CHANGED_FILES=$(git diff --name-only HEAD~10..HEAD 2>/dev/null || git diff --name-only HEAD)
+          
+          if echo "$CHANGED_FILES" | grep -q "^resources_tif/"; then
+            echo "❌ ERROR: resources_tif/ files detected in commits"
+            echo ""
+            echo "Changed files in resources_tif/:"
+            echo "$CHANGED_FILES" | grep "^resources_tif/"
+            echo ""
+            echo "These files MUST NOT be committed. See constitution: Content-First, Resource-External"
+            exit 1
+          else
+            echo "✅ PASS: No resources_tif/ files in commits"
+          fi
+
+      - name: Check for resources_tif/ in PR files
+        if: github.event_name == 'pull_request' && steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "❌ ERROR: resources_tif/ files detected in this PR"
+          echo ""
+          echo "Changed files:"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+          echo ""
+          echo "This violates TIF TeachBook Constitution Principle I: Content-First, Resource-External"
+          echo ""
+          echo "ℹ️  Guidelines:"
+          echo "1. Do NOT commit files from resources_tif/"
+          echo "2. Manually curate and adapt content from resources_tif/ into book/tif_python/tema-NN/"
+          echo "3. Commit ONLY the final adapted content (in /book/)"
+          exit 1
+
+      - name: Success
+        if: github.event_name == 'pull_request' && steps.changed-files.outputs.any_changed == 'false'
+        run: |
+          echo "✅ PASS: No resources_tif/ files in this PR"
+
+  check-gitignore:
+    name: Verify resources_tif in .gitignore
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify resources_tif in .gitignore
+        run: |
+          echo "🔍 Checking .gitignore for resources_tif/ pattern..."
+          
+          if grep -q "^resources_tif/" .gitignore; then
+            echo "✅ PASS: resources_tif/ found in .gitignore"
+          else
+            echo "❌ ERROR: resources_tif/ NOT in .gitignore"
+            echo ""
+            echo "Add this line to .gitignore:"
+            echo "resources_tif/"
+            exit 1
+          fi
