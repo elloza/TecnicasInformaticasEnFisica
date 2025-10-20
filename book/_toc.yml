@@ -9,6 +9,7 @@ parts:
       - file: some_content/text_and_code.ipynb
   - caption: Python para TIF
     chapters:
+    - file: test_thebe_native.md
     - file: tif_python/instalacion-vscode.md
     - file: tif_python/tema-00/teoria.md
       sections:

@@ -1,3 +1,14 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
 # Tema 00: Ejercicios — Introducción a Python
 
 :::{tip}
@@ -394,11 +405,11 @@ plt.figure(figsize=(10, 6))
 
 Antes de marcar como completado:
 
-- [ ] Ejecuté todos los ejercicios localmente
-- [ ] Todos los tests pasaron (✅)
-- [ ] El código es legible y tiene comentarios
-- [ ] Intenté desafiar los ejercicios (no solo copiar solución)
-- [ ] Probé en navegador si es posible
+- Ejecuté todos los ejercicios localmente
+- Todos los tests pasaron (✅)
+- El código es legible y tiene comentarios
+- Intenté desafiar los ejercicios (no solo copiar solución)
+- Probé en navegador si es posible
 
 ---
 

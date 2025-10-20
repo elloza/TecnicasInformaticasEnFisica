@@ -1,3 +1,14 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
 # Tema 05 · NumPy y Matplotlib
 
 Basado en `resources_tif/apuntes_md/teoria/ProgramacionPythonTIF-Tema5.md`.

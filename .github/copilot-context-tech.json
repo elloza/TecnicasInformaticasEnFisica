@@ -1,0 +1,277 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode-copilot-context/main/schemas/copilot-context.schema.json",
+  "version": "1.0.0",
+  "name": "TIF TeachBook - Technical Context",
+  "description": "Technical stack and architecture context for GitHub Copilot in the Técnicas Informáticas en Física TeachBook project",
+  "technologies": {
+    "staticSiteGeneration": {
+      "name": "Jupyter Book",
+      "version": "1.0+",
+      "description": "Static site generator built on Sphinx, used to generate HTML from Markdown and Jupyter notebooks",
+      "wrapper": "TeachBooks",
+      "configuration": "book/_config.yml",
+      "buildCommand": "jupyter-book build book/",
+      "outputDirectory": "book/_build/html/",
+      "documentation": "https://jupyterbook.org/",
+      "notes": "TeachBooks is a wrapper around Jupyter Book with additional extensions for educational content"
+    },
+    "interactiveExecution": {
+      "name": "Thebe",
+      "version": "latest (via Sphinx-Thebe)",
+      "description": "Browser-based code execution layer that transforms static code cells into interactive executable cells",
+      "mode": "Thebe Lite",
+      "runtime": "Pyodide (WebAssembly)",
+      "cdnUrl": "https://cdn.jsdelivr.net/pyodide/v0.23.0/full/",
+      "configuration": "book/_config.yml (sphinx.config.thebe_config)",
+      "launchButton": "html_theme_options.launch_buttons.thebe",
+      "documentation": "https://sphinx-thebe.readthedocs.io/",
+      "teachbooksImplementation": "https://teachbooks.io/manual/features/live_code.html",
+      "notes": "Thebe Lite uses Pyodide (no Binder/JupyterHub needed), enables pure browser-based Python execution"
+    },
+    "pythonRuntime": {
+      "name": "Pyodide",
+      "version": "0.23.0+",
+      "description": "WebAssembly Python distribution that runs entirely in the browser",
+      "packageManager": "micropip",
+      "preloadedPackages": ["numpy", "matplotlib", "scipy", "pandas", "sympy"],
+      "installationMethod": "Browser downloads WASM files from CDN on first page load",
+      "memoryLimit": "~4 GB (browser-dependent)",
+      "initializationLatency": "5-10 seconds (first load), <2 seconds (cached)",
+      "documentation": "https://pyodide.org/",
+      "packageList": "https://pyodide.org/en/stable/usage/packages-in-pyodide.html",
+      "notes": "Sandboxed execution, no filesystem access, CORS restrictions apply"
+    },
+    "contentFormat": {
+      "name": "MyST Markdown",
+      "version": "latest",
+      "description": "Markdown flavor with extended syntax for Sphinx/Jupyter Book",
+      "codeBlockSyntax": "{code-cell} ipython3",
+      "metadataSyntax": ":tags: [hide-input, hide-output, thebe-init]",
+      "documentation": "https://myst-parser.readthedocs.io/",
+      "cellTypes": ["code-cell", "code-block", "directive"],
+      "notes": "Supports YAML front matter for per-page configuration"
+    },
+    "styling": {
+      "framework": "Sphinx + PyData Theme",
+      "customCSS": "book/_static/custom.css",
+      "themeOptions": "book/_config.yml (html_theme_options)",
+      "darkModeSupport": true,
+      "imageInverter": "Sphinx-Image-Inverter (TeachBooks extension)",
+      "notes": "Custom Thebe styling in book/_static/thebe-custom.css (to be created)"
+    },
+    "moduleDependencies": {
+      "require.js": {
+        "version": "2.3.4",
+        "cdnUrl": "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js",
+        "purpose": "JavaScript module loader required for Thebe",
+        "configuration": "book/_config.yml (html_js_files)"
+      }
+    }
+  },
+  "projectStructure": {
+    "bookContent": "book/",
+    "temas": "book/tif_python/tema-{00..06}/",
+    "staticAssets": "book/_static/",
+    "figures": "book/figures/",
+    "buildOutput": "book/_build/",
+    "specifications": "specs/001-thebe-livecode-integration/",
+    "thebeModules": {
+      "initialization": "book/_static/thebe-init.js",
+      "kernelManager": "book/_static/thebe-kernel.js",
+      "executor": "book/_static/thebe-executor.js",
+      "outputRenderer": "book/_static/thebe-output.js",
+      "cellDetector": "book/_static/thebe-cells.js",
+      "metadataParser": "book/_static/thebe-metadata.js",
+      "uiComponents": "book/_static/thebe-ui.js",
+      "fallbackHandler": "book/_static/thebe-fallback.js",
+      "errorBoundary": "book/_static/thebe-errors.js"
+    }
+  },
+  "featureImplementation": {
+    "thebeIntegration": {
+      "specification": "specs/001-thebe-livecode-integration/spec.md",
+      "implementationPlan": "specs/001-thebe-livecode-integration/plan.md",
+      "tasks": "specs/001-thebe-livecode-integration/tasks.md",
+      "research": "specs/001-thebe-livecode-integration/research.md",
+      "dataModel": "specs/001-thebe-livecode-integration/data-model.md",
+      "apiContracts": "specs/001-thebe-livecode-integration/contracts/thebe-api.md",
+      "quickstart": "specs/001-thebe-livecode-integration/quickstart.md",
+      "userStories": [
+        "US1: Learner executes code in browser",
+        "US2: Author marks cells executable",
+        "US3: Heavy dependencies show warning",
+        "US4: Fallback images for slow cells",
+        "US5: Per-tema package configuration"
+      ],
+      "phases": {
+        "phase0": "Research & Technical Validation (COMPLETED)",
+        "phase1": "Design & Infrastructure (IN PROGRESS)",
+        "phase2A": "MVP Implementation (User Stories 1-2)",
+        "phase2B": "Extended Features (User Stories 3-4)",
+        "phase2C": "Configuration & Rollout (User Story 5)",
+        "phase3": "Polish & Deployment"
+      }
+    }
+  },
+  "architecturePatterns": {
+    "kernelLifecycle": {
+      "strategy": "Page-scoped kernels",
+      "description": "Fresh kernel per page load, destroyed on navigation",
+      "rationale": "Isolates tema learning modules, prevents memory leaks",
+      "implementation": "ThebeKernelManager singleton per page"
+    },
+    "packageLoading": {
+      "strategy": "Pre-load common packages, lazy-load specialized",
+      "defaultPackages": ["numpy", "matplotlib"],
+      "perTemaOverride": "YAML front matter (extra_packages)",
+      "dynamicLoading": "micropip.install() in code cells"
+    },
+    "gracefulDegradation": {
+      "strategy": "Detect WASM support, fallback to static cells",
+      "fallbackUX": "Banner + installation link + static code display",
+      "retryMechanism": "30-second timeout with retry button"
+    },
+    "cellMetadata": {
+      "standardTags": ["hide-input", "hide-output", "remove-cell", "thebe-init"],
+      "customTags": ["fallback-image", "local-kernel-recommended", "heavy-computation"],
+      "implementation": "CSS classes + JavaScript hooks"
+    }
+  },
+  "dataEntities": {
+    "CodeCell": {
+      "attributes": ["cellId", "sourceCode", "metadata", "output", "status", "executionCount"],
+      "states": ["ready", "executing", "completed", "error", "disabled"]
+    },
+    "Kernel": {
+      "attributes": ["kernelId", "status", "pyodideVersion", "loadedPackages", "memoryUsageMB"],
+      "states": ["uninitialized", "initializing", "ready", "busy", "error", "shutdown"]
+    },
+    "CellMetadata": {
+      "attributes": ["tags", "fallbackImage", "localKernelRecommended", "expectedExecutionTime"]
+    },
+    "ThebeConfig": {
+      "attributes": ["enabled", "pyodideUrl", "defaultPackages", "initTimeout", "executionTimeout"]
+    },
+    "FallbackImage": {
+      "attributes": ["imagePath", "cellId", "altText", "visible"]
+    }
+  },
+  "apiContracts": {
+    "ThebeKernelManager.initialize()": {
+      "description": "Initialize Pyodide kernel with packages",
+      "input": "ThebeConfig",
+      "output": "InitializeResult",
+      "timeout": "30 seconds"
+    },
+    "ThebeKernelManager.executeCell()": {
+      "description": "Execute Python code in kernel",
+      "input": "cellId, sourceCode, ExecuteOptions",
+      "output": "ExecuteResult",
+      "timeout": "30 seconds"
+    },
+    "ThebeKernelManager.restart()": {
+      "description": "Restart kernel (fresh state)",
+      "input": "ThebeConfig",
+      "output": "InitializeResult"
+    },
+    "ThebeKernelManager.clearCellOutput()": {
+      "description": "Clear cell output display",
+      "input": "cellId",
+      "output": "void"
+    },
+    "ThebeKernelManager.getStatus()": {
+      "description": "Get current kernel status",
+      "input": "void",
+      "output": "KernelStatus"
+    }
+  },
+  "performanceTargets": {
+    "kernelInitialization": "<10 seconds (SC-002)",
+    "cellExecution": "<5 seconds (SC-002)",
+    "outputRendering": "<500 milliseconds",
+    "memoryUsage": "<1 GB per page",
+    "cacheEfficiency": "Pyodide cached after first load"
+  },
+  "codingGuidelines": {
+    "javascript": {
+      "modulePattern": "ES6 modules",
+      "asyncPattern": "async/await for all Pyodide operations",
+      "errorHandling": "Try-catch with user-friendly messages",
+      "naming": "camelCase for functions, PascalCase for classes",
+      "documentation": "JSDoc comments for all public APIs"
+    },
+    "python": {
+      "version": "3.11 (Pyodide default)",
+      "style": "PEP 8",
+      "imports": "Standard library + NumPy/Matplotlib/SciPy/Pandas",
+      "notes": "Code runs in browser sandbox, no filesystem access"
+    },
+    "markdown": {
+      "format": "MyST Markdown",
+      "codeCells": "{code-cell} ipython3",
+      "metadata": ":tags: [tag1, tag2]",
+      "frontMatter": "YAML front matter for per-tema config"
+    },
+    "css": {
+      "selectors": ".cell.code_cell[data-thebe-executable]",
+      "thebeClasses": ".thebelab-button, .thebelab-input, .thebelab-output",
+      "customClasses": ".thebe-fallback-banner, .thebe-loading-indicator"
+    }
+  },
+  "testingStrategy": {
+    "phase2A": {
+      "target": "tema-00 teoría fully interactive",
+      "validation": "Manual browser testing (Chrome, Firefox, Safari)",
+      "successCriteria": "All code cells executable, output correct"
+    },
+    "phase2B": {
+      "target": "Fallback images + warning banners",
+      "validation": "Test on old browsers (Safari <11), simulate WASM disabled",
+      "successCriteria": "Graceful fallback to static content"
+    },
+    "phase2C": {
+      "target": "Per-tema package configuration",
+      "validation": "Test tema-05 with pandas, tema-03 with sympy",
+      "successCriteria": "Packages load correctly per tema"
+    }
+  },
+  "deploymentWorkflow": {
+    "localBuild": "jupyter-book build book/",
+    "localPreview": "Open book/_build/html/index.html in browser",
+    "productionDeploy": "GitHub Actions (TeachBooks deploy workflow)",
+    "preDeploymentChecks": [
+      "All tasks.md items marked [X]",
+      "All 10 success criteria (SC-001 to SC-010) verified",
+      "Constitutional compliance verified",
+      "Security audit passed"
+    ]
+  },
+  "commonIssues": {
+    "thebe_not_loading": {
+      "symptom": "Run buttons don't appear",
+      "solution": "Check thebe: true in launch_buttons, verify require.js loaded"
+    },
+    "pyodide_timeout": {
+      "symptom": "Kernel initialization hangs",
+      "solution": "Check network, verify CDN accessible, increase timeout"
+    },
+    "memory_exhausted": {
+      "symptom": "Browser crashes or freezes",
+      "solution": "Close other tabs, restart kernel, use local Jupyter for large datasets"
+    },
+    "package_not_found": {
+      "symptom": "ModuleNotFoundError after import",
+      "solution": "Check Pyodide package list, add to extra_packages, or use micropip"
+    }
+  },
+  "references": {
+    "jupyterBook": "https://jupyterbook.org/",
+    "teachBooks": "https://teachbooks.io/",
+    "thebe": "https://sphinx-thebe.readthedocs.io/",
+    "pyodide": "https://pyodide.org/",
+    "mystMarkdown": "https://myst-parser.readthedocs.io/",
+    "specification": "specs/001-thebe-livecode-integration/spec.md",
+    "plan": "specs/001-thebe-livecode-integration/plan.md",
+    "research": "specs/001-thebe-livecode-integration/research.md"
+  }
+}
