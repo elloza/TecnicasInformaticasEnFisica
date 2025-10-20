@@ -1,45 +1,231 @@
 ---
-description: "Task list template for feature implementation"
+description: "Task list template for TeachBook tema creation and publication"
 ---
 
-# Tasks: [FEATURE NAME]
+# Tasks: Tema [NN] — [Title]
 
-**Input**: Design documents from `/specs/[###-feature-name]/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Input**: Constitution (`.specify/memory/constitution.md`), Learning objectives, Content sources
+**Prerequisites**: plan.md (required), spec.md (learning outcomes), research.md (source materials)
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Outputs**: 
+- `book/tif_python/tema-NN/teoria.md` (theory with executable code cells)
+- `book/tif_python/tema-NN/ejercicios.md` (10-15 exercises with tests)
+- `.specify/tasks/tema-NN.md` (this task plan)
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Constitution Compliance**: All tasks MUST verify adherence to 4 core principles:
+1. **Content-First, Resource-External**: No `resources_tif/` files committed
+2. **Module-Structured Curriculum**: `teoria.md` + `ejercicios.md` pattern
+3. **Live Code + Local-First Execution**: All code cells executable in Pyodide
+4. **Test-Driven Exercise Design**: Exercises with pedagogical objectives + automated tests
 
-## Format: `[ID] [P?] [Story] Description`
+---
+
+## Format: `[ID] [P?] [Phase] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+- **[Phase]**: Workflow phase (Plan → Draft → Self-Test → Peer Review → Publish)
+- Include exact file paths and constitution principles referenced
 
-## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+---
 
-<!-- 
-  ============================================================================
-  IMPORTANT: The tasks below are SAMPLE TASKS for illustration purposes only.
-  
-  The /speckit.tasks command MUST replace these with actual tasks based on:
-  - User stories from spec.md (with their priorities P1, P2, P3...)
-  - Feature requirements from plan.md
-  - Entities from data-model.md
-  - Endpoints from contracts/
-  
-  Tasks MUST be organized by user story so each story can be:
-  - Implemented independently
-  - Tested independently
-  - Delivered as an MVP increment
-  
-  DO NOT keep these sample tasks in the generated tasks.md file.
-  ============================================================================
--->
+## Phase 1: Plan (Definition & Curation)
+
+**Purpose**: Define tema scope, objectives, and map content from `resources_tif/`
+
+**Conformance**: Principles II (Module-Structured) + I (Content-First)
+
+- [ ] T001 Define learning objectives (3-5 concrete skills learners will demonstrate)
+- [ ] T002 Outline theory sections (conceptual flow, key equations, visualizations)
+- [ ] T003 Design 10-15 exercise problems (graduated: básico → intermedio → avanzado)
+- [ ] T004 [P] Map source materials from `resources_tif/` (document what to reuse/adapt/create)
+- [ ] T005 [P] List Python dependencies needed (NumPy, Matplotlib, SciPy, etc.)
+- [ ] T006 Identify cross-tema dependencies (e.g., "Requires: Tema 02")
+- [ ] T007 Estimate time investment (theory + exercises) per learner
+
+**Checkpoint**: Plan documented in `.specify/tasks/tema-NN.md` — ready for Draft phase
+
+---
+
+## Phase 2: Draft (Content Creation)
+
+**Purpose**: Write teoria + ejercicios from plan, prepare code cells
+
+**Conformance**: Principles III (Live Code) + II (Module-Structured)
+
+### Theory Writing
+
+- [ ] T008 [P] Write Section 1: Conceptual foundation + 3-5 code examples in `book/tif_python/tema-NN/teoria.md`
+- [ ] T009 [P] Write Section 2: Practical applications + 3-5 code examples
+- [ ] T010 [P] Write Section 3: Advanced topics (if applicable) + 2-3 code examples
+- [ ] T011 Add diagrams/figures to `book/figures/` (SVG or PNG)
+- [ ] T012 Verify all code cells marked `{code-cell} ipython3`
+- [ ] T013 Add rationale sections explaining "why" for each major concept
+
+### Exercise Writing
+
+- [ ] T014 [P] Write Exercise 1-3: Básico difficulty (direct application of theory)
+  - Each with: `:topic:` admonition (pedagogical objective), success criteria, estimated time
+  - Include code skeleton (TODOs) + solution section + tests
+- [ ] T015 [P] Write Exercise 4-7: Intermedio difficulty (combining concepts)
+- [ ] T016 [P] Write Exercise 8-10: Avanzado difficulty (synthesis/extension)
+- [ ] T017 Add "Checklist de Revisión" section at end of `ejercicios.md`
+
+**Checkpoint**: Draft complete — all sections written, code not yet tested
+
+---
+
+## Phase 3: Self-Test (Local Execution Verification)
+
+**Purpose**: Ensure all code cells execute correctly in local Jupyter environment
+
+**Conformance**: Principle III (Live Code + Local-First Execution)
+
+- [ ] T018 Execute every code cell in `teoria.md` locally (Python ≥3.10)
+  - [ ] Document any errors in PR description
+  - [ ] Fix errors and re-run until all pass
+- [ ] T019 Execute every exercise in `ejercicios.md` locally
+  - [ ] Run all automated tests (assertions) — must all pass ✅
+  - [ ] Verify expected outputs match documentation
+  - [ ] Time each exercise — confirm estimates are realistic
+- [ ] T020 Check for heavy dependencies (requests, file I/O, APIs)
+  - [ ] If present: add deprecation warning + "local kernel recommended" note
+- [ ] T021 Verify all plots/visualizations render correctly
+  - [ ] If not: add fallback `.png` image to `book/figures/`
+- [ ] T022 Validate Markdown syntax with `markdownlint` (optional)
+
+**Checkpoint**: All code runs locally without errors — ready for Peer Review
+
+---
+
+## Phase 4: Peer Review (Independent Validation)
+
+**Purpose**: Have independent reviewer verify pedagogical quality, code correctness, browser compatibility
+
+**Conformance**: Principle IV (Test-Driven Exercise Design)
+
+**Reviewer checklist**:
+
+- [ ] T023 [Reviewer] Run all code cells locally in Jupyter — all pass? ✅
+- [ ] T024 [Reviewer] Test exercises in browser (Pyodide) if possible
+  - [ ] Which exercises work? Which fail? Document in review comment
+- [ ] T025 [Reviewer] Verify pedagogical objectives are clear
+  - [ ] Can you understand what each exercise expects the learner to demonstrate?
+  - [ ] Are success criteria testable?
+  - [ ] Provide feedback if ambiguous
+- [ ] T026 [Reviewer] Check for confusing explanations or gaps
+  - [ ] Highlight sections that could be clearer
+  - [ ] Suggest additional examples if needed
+- [ ] T027 [Reviewer] Verify exercises are appropriately graduated (básico → avanzado)
+- [ ] T028 [Reviewer] Confirm no `resources_tif/` files referenced in content
+- [ ] T029 [Reviewer] Sign-off: "✅ Approved for publication"
+
+**Checkpoint**: Peer review complete + feedback addressed — ready for Publish
+
+---
+
+## Phase 5: Publish (Integration & Deployment)
+
+**Purpose**: Commit tema to main branch, verify build succeeds, site updates
+
+**Conformance**: Principle I (Content-First, Resource-External)
+
+- [ ] T030 Address all peer review feedback
+  - [ ] Re-test locally if changes made
+- [ ] T031 Update `_toc.yml` to register tema-NN:
+  ```yaml
+  - file: tif_python/tema-NN/teoria.md
+    sections:
+    - file: tif_python/tema-NN/ejercicios.md
+  ```
+- [ ] T032 Verify no `resources_tif/` files in staging area:
+  ```bash
+  git diff --cached --name-only | grep resources_tif
+  ```
+  (Should return nothing)
+- [ ] T033 Commit changes:
+  ```bash
+  git add book/tif_python/tema-NN/ book/_toc.yml .specify/tasks/tema-NN.md
+  git commit -m "feat: add tema-NN ([title]) - theory + exercises + task plan"
+  ```
+- [ ] T034 Push to main: `git push origin main`
+- [ ] T035 Verify GitHub Actions build succeeds (green ✅)
+- [ ] T036 Verify site publishes and tema-NN appears in live book
+
+**Checkpoint**: Tema published! Visible at `https://<username>.github.io/TecnicasInformaticasEnFisica/`
+
+---
+
+## Pre-Publication Verification Checklist
+
+Before merging ANY tema to main, verify:
+
+| Item | Principle | Status |
+|------|-----------|--------|
+| Theory: All code cells execute locally (Python ≥3.10) | III | ☐ |
+| Exercises: All tests pass locally (no failures) | IV | ☐ |
+| Exercises: Each has pedagogical objective + success criteria | IV | ☐ |
+| Plots/visualizations render in browser OR have static fallback | III | ☐ |
+| No `resources_tif/` files in Git history | I | ☐ |
+| Module follows `tema-NN/teoria.md` + `tema-NN/ejercicios.md` pattern | II | ☐ |
+| Cross-tema dependencies documented in `ejercicios.md` preamble | II | ☐ |
+| Independent reviewer has signed off ✅ | IV | ☐ |
+| `_toc.yml` updated with tema entry | — | ☐ |
+
+**All items MUST be checked before publication**
+
+---
+
+## Dependencies & Execution Order
+
+### Within-Tema Flow (Sequential)
+
+1. **Phase 1: Plan** (define scope)
+2. **Phase 2: Draft** (write content — can parallelize T008-T016)
+3. **Phase 3: Self-Test** (verify locally — author only)
+4. **Phase 4: Peer Review** (independent validation — reviewer only)
+5. **Phase 5: Publish** (merge to main)
+
+### Between-Temas (Parallel Allowed)
+
+- Multiple authors can work on different temas in parallel
+- Each tema follows the same 5-phase flow independently
+- Temas can be published in any order (no dependencies)
+- Earlier temas do NOT block later temas
+
+### Critical Gates (DO NOT SKIP)
+
+- ✋ Phase 3 (Self-Test) MUST pass before entering Peer Review
+- ✋ Phase 4 (Peer Review) MUST complete + sign-off before Publish
+- ✋ Pre-Publication Checklist ALL items must be ☑ before merge
+
+---
+
+## Constitution Compliance Throughout
+
+| Phase | Principles Verified | How |
+|-------|-------------------|-----|
+| Plan | II (Module-Structured) | Check tema outline follows pattern |
+| Draft | III (Live Code), II (Module-Structured) | Verify all cells `{code-cell} ipython3` |
+| Self-Test | III (Live Code + Local-First) | Execute all code locally without errors |
+| Peer Review | IV (Test-Driven) | Reviewer confirms tests + pedagogy quality |
+| Publish | I (Content-First, Resource-External) | Verify no `resources_tif/` in commits |
+
+---
+
+## Notes
+
+- **Parallel within Phase 2**: Sections T008-T016 can be written by different team members on different files
+- **Serial across Phases**: Each phase must complete before next begins (gate-based)
+- **Peer Review ≠ Approval**: Reviewer is independent (not author)
+- **Test First**: Exercises should declare tests before solution shown
+- **Commit Early**: Save progress after each phase checkpoint
+- **Constitution is Law**: All deviations require amendment approval
+
+---
+
+**Template Version**: 1.0.0 | **Aligned with Constitution**: v1.0.0 | **Last Updated**: 2025-10-20
+
+````
 
 ## Phase 1: Setup (Shared Infrastructure)
 
