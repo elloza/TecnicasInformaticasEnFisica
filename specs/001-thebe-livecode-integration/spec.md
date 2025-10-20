@@ -73,48 +73,53 @@ Some libraries (NumPy, Matplotlib) work in Pyodide, but others (requests, pandas
 
 ### User Story 4 - Fallback Static Outputs for Complex Visualizations (Priority: P2)
 
-Some code produces outputs that don't render well in browser (3D plots, interactive dashboards). Authors can include `.png` images as fallbacks for browser users while code still executes locally.
+Some code produces outputs that don't render well in browser (3D plots, interactive dashboards). Authors can include `.png` images as fallbacks for browser users while code still executes in the browser.
 
-**Why this priority**: Ensures accessibility—browser users see something meaningful even if interactivity limited.
+**Why this priority**: Ensures accessibility—browser users see something meaningful immediately via fallback image, with option to run code for interactive output.
 
 **Independent Test**: Can be fully tested by:
 1. Creating a cell with fallback image metadata
 2. Building TeachBook
-3. Verifying image displays in browser + cell also runs
+3. Verifying image displays in browser + Run button is visible/functional
+4. Confirming cell executes when clicked
 
 **Acceptance Scenarios**:
 
-1. **Given** a cell with a 3D plot and fallback image (metadata: `fallback-image: "figures/3d-plot.png"`), **When** rendered in browser, **Then** fallback image displays with note "Click 'Run' to execute code locally for full interactivity"
-2. **Given** same cell executed locally, **When** run in Jupyter, **Then** interactive 3D plot renders (image fallback ignored)
+1. **Given** a cell with a 3D plot and fallback image (metadata: `fallback-image: "figures/3d-plot.png"`), **When** rendered in browser, **Then** fallback image displays with note "Click 'Run' to execute code" + Run button remains visible
+2. **Given** learner clicks Run on a cell with fallback image, **When** code executes, **Then** execution output displays; fallback image remains visible as context
+3. **Given** same cell viewed in local Jupyter, **When** run, **Then** interactive 3D plot renders (image fallback is Thebe-only feature, ignored locally)
 
 ---
 
 ### User Story 5 - Tema Configuration & Opt-In/Opt-Out (Priority: P3)
 
-Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema config allows opting specific temas in/out (e.g., "Tema-05 uses advanced GPU code, Thebe disabled").
+Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema config allows opting specific temas in/out and customizing Pyodide behavior (e.g., "Tema-04 requires scipy, Tema-05 disabled").
 
-**Why this priority**: Operational control—team can pilot with tema-00, gradually expand to other temas.
+**Why this priority**: Operational control—team can pilot with tema-00, gradually expand to other temas, customize kernel per topic.
 
 **Independent Test**: Can be fully tested by:
 1. Disabling Thebe globally in config
 2. Building TeachBook
 3. Verifying NO cells are interactive
 4. Re-enabling + rebuilding + verifying cells ARE interactive
+5. Configuring per-tema packages + verifying kernel loads specified dependencies
 
 **Acceptance Scenarios**:
 
 1. **Given** Thebe disabled in `_config.yml`, **When** TeachBook builds, **Then** ALL code cells are static (no Run buttons)
 2. **Given** Thebe enabled globally but disabled for tema-05, **When** TeachBook builds, **Then** tema-00-04 cells are interactive, tema-05 cells are static
-3. **Given** config for Pyodide kernel (custom packages, settings), **When** cell executes, **Then** Pyodide uses specified config
+3. **Given** per-tema config in front matter (e.g., `extra_packages: ["scipy"]` + `env: {"OMP_NUM_THREADS": "1"}`), **When** cell executes, **Then** Pyodide initializes with specified packages + environment variables
+4. **Given** per-tema config missing, **When** cell executes, **Then** default kernel (NumPy, Matplotlib, stdlib) is used
 
 ---
 
 ### Edge Cases
 
-- What happens when a learner clicks "Run" on a cell that modifies global state (e.g., writes to a file)? → Code should execute safely in browser sandbox with no side effects; write operations fail gracefully
-- How does system handle if learner runs 10 heavy cells in sequence and browser memory fills? → Kernel can be reset via button; learner sees warning if memory usage high
-- What if Pyodide kernel initialization fails (e.g., browser lacks WASM support)? → Clear message explaining how to run locally; static cell displayed as fallback
-- What if a cell references an external API (e.g., `requests.get("https://...")`)?  → Code runs but may fail due to CORS or network isolation; error message explains limitation
+- What happens when a learner clicks "Run" on a cell that modifies global state (e.g., writes to a file)? → Code executes safely in browser sandbox with no side effects; write operations fail gracefully with error message.
+- How does system handle if learner runs 10 heavy cells in sequence and browser memory fills? → Kernel can be reset via button; learner sees warning if memory usage high.
+- What if Pyodide kernel initialization fails (e.g., browser lacks WASM support)? → Display banner with installation guide link; render all cells as static syntax-highlighted blocks; page remains readable.
+- What if a cell references an external API (e.g., `requests.get("https://...")`)?  → Code runs but may fail due to CORS or network isolation; error message explains limitation.
+- What if learner navigates away from teoria.md to ejercicios.md? → Current page's kernel is destroyed; returning to teoria.md creates fresh kernel. Variables from teoria.md are NOT available in ejercicios.md (page-scoped kernels).
 
 ---
 
@@ -132,10 +137,10 @@ Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema conf
 - **FR-008**: System MUST allow authors to add deprecation/warning banners for cells with heavy dependencies
 - **FR-009**: System MUST support fallback static images for complex visualizations (via cell metadata)
 - **FR-010**: System MUST allow book-level enable/disable of Thebe via `_config.yml`
-- **FR-011**: System MUST allow per-tema enable/disable of Thebe via front matter or metadata
-- **FR-012**: System MUST initialize Pyodide kernel with NumPy, Matplotlib, and standard library (auto-loaded)
-- **FR-013**: System MUST gracefully degrade if Pyodide fails to load (display static content + fallback message)
-- **FR-014**: System MUST reset kernel state on demand (via "Clear Output" button or similar)
+- **FR-011**: System MUST allow per-tema enable/disable of Thebe via front matter or metadata; support per-tema custom config for pre-loaded packages (`extra_packages`) and environment variables (`env`)
+- **FR-012**: System MUST initialize Pyodide kernel with NumPy, Matplotlib, and standard library (auto-loaded); apply per-tema package + environment config if specified
+- **FR-013**: System MUST gracefully degrade if Pyodide fails to load: display banner (with installation guide link) + render all code cells as static syntax-highlighted blocks (no Run buttons) + no JS console errors
+- **FR-014**: System MUST reset kernel state on demand (via "Clear Output" button or similar); kernel must be page-scoped (fresh kernel per page, reset on navigation away/back)
 - **FR-015**: System MUST handle timeout for long-running cells (>2 min → warning, user can stop execution)
 
 ### Key Entities
@@ -184,6 +189,8 @@ Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema conf
 - **Storage**: No persistent storage in browser. Each browser session is independent; learner code is NOT saved.
 - **Dependencies**: Only libraries available in Pyodide can be auto-loaded. Missing dependencies fail gracefully with clear message.
 - **Security**: Pyodide sandbox prevents file system access and network calls (except for CORS-enabled endpoints). This is a feature; learners cannot accidentally write to server.
+- **Kernel Scope**: Each page (teoria.md, ejercicios.md, etc.) maintains its own independent kernel instance. Navigating between pages destroys the previous kernel and creates a new one. Variables defined on one page are not accessible on another page.
+- **Observability**: No analytics/logging infrastructure in v1; errors displayed immediately to learner in browser. Production observability (e.g., error rate tracking) deferred to v2.
 
 ---
 
@@ -204,6 +211,15 @@ Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema conf
 - For cells with heavy dependencies (requests, pandas): Add cell metadata `tags: ["local-kernel-recommended"]`
 - For cells with complex plots: Add metadata `fallback-image: "figures/tema-XX-figYY.png"` + check in image
 - Test cells locally in Jupyter before publishing (Pyodide ≠ local Python; some edge cases differ)
+- Per-tema, add front matter config if special dependencies needed:
+  ```yaml
+  ---
+  thebe:
+    extra_packages: ["scipy", "pandas"]
+    env:
+      OMP_NUM_THREADS: "1"
+  ---
+  ```
 
 ### For Developers/DevOps
 
@@ -225,6 +241,7 @@ Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema conf
   ```
 - Verify TeachBook build succeeds: `jupyter-book build book/`
 - Test a few cells manually in published site after first deploy
+- On Pyodide load failure, verify banner displays + static cells render + no console errors
 
 ---
 
@@ -239,5 +256,19 @@ Book-level config (`_config.yml`) enables/disables Thebe globally. Per-tema conf
 
 ---
 
-**Status**: Ready for Clarification Check (if needed) → Planning Phase
+---
+
+## Clarifications
+
+### Session 2025-10-20
+
+- Q: What observability/logging approach for cell execution events? → A: No logging beyond immediate error display to learner; keep it simple/lightweight (v2 can add analytics).
+- Q: What custom Pyodide configuration options per-tema? → A: Pre-load packages + environment variables (e.g., `extra_packages`, `env` vars); defer per-tema timeouts to v2.
+- Q: Fallback image display behavior—hide Run button or keep it visible? → A: Show fallback image + keep Run button visible/functional; learner can choose to view static output or execute code.
+- Q: Kernel state persistence across page navigation (teoria.md → ejercicios.md)? → A: Each page gets fresh kernel; kernel resets per-page on navigation. Prevents memory bloat; keeps modules independent.
+- Q: Pyodide load failure UX—what should learners see? → A: Display banner + static syntax-highlighted cells (no Run buttons) + link to installation guide; page remains readable, no JS errors.
+
+---
+
+**Status**: ✅ Clarifications Complete → Ready for Planning Phase
 
