@@ -24,23 +24,23 @@ This document breaks down the Thebe LiveCode Integration into executable tasks o
 
 ### Research Tasks
 
-- [ ] T001 Research Jupyter Book + Thebe configuration (`specs/001-thebe-livecode-integration/research.md` - Task 0.1)
+- [X] T001 Research Jupyter Book + Thebe configuration (`specs/001-thebe-livecode-integration/research.md` - Task 0.1)
   - Document: minimal `_config.yml` Thebe config, version compatibility, troubleshooting
   - Success: Config tested locally; `jupyter-book build book/` succeeds with Thebe enabled
   
-- [ ] T002 [P] Research Pyodide package loading (`specs/001-thebe-livecode-integration/research.md` - Task 0.2)
+- [X] T002 [P] Research Pyodide package loading (`specs/001-thebe-livecode-integration/research.md` - Task 0.2)
   - Document: package loading patterns, latency benchmarks, memory footprint comparisons
   - Success: Benchmark data collected; recommendations documented for tema-00-06
   
-- [ ] T003 [P] Research cell metadata & rendering (`specs/001-thebe-livecode-integration/research.md` - Task 0.3)
+- [X] T003 [P] Research cell metadata & rendering (`specs/001-thebe-livecode-integration/research.md` - Task 0.3)
   - Document: Jupyter metadata standards, Thebe rendering hooks, fallback image approach
   - Success: Metadata table created; rendering tested in HTML output
   
-- [ ] T004 [P] Research graceful degradation & failure modes (`specs/001-thebe-livecode-integration/research.md` - Task 0.4)
+- [X] T004 [P] Research graceful degradation & failure modes (`specs/001-thebe-livecode-integration/research.md` - Task 0.4)
   - Document: Pyodide failure scenarios, error detection, recommended UX flows
   - Success: All 4 failure modes tested; UX flows documented
   
-- [ ] T005 [P] Research kernel lifecycle & multi-page isolation (`specs/001-thebe-livecode-integration/research.md` - Task 0.5)
+- [X] T005 [P] Research kernel lifecycle & multi-page isolation (`specs/001-thebe-livecode-integration/research.md` - Task 0.5)
   - Document: Thebe kernel architecture, page-scoping approach, memory implications
   - Success: Kernel isolation demo working; memory leaks tested
 
@@ -54,22 +54,22 @@ This document breaks down the Thebe LiveCode Integration into executable tasks o
 
 ### Design Tasks
 
-- [ ] T006 Create data model specification (`specs/001-thebe-livecode-integration/data-model.md`)
+- [X] T006 Create data model specification (`specs/001-thebe-livecode-integration/data-model.md`)
   - Extract entities from spec: CodeCell, Kernel, CellMetadata, ThebeConfig, FallbackImage
   - Document: fields, types, relationships, validation rules, state transitions
   - Success: All 5 entities defined with complete attribute lists + validation rules
 
-- [ ] T007 [P] Create API contracts (`specs/001-thebe-livecode-integration/contracts/thebe-api.md`)
+- [X] T007 [P] Create API contracts (`specs/001-thebe-livecode-integration/contracts/thebe-api.md`)
   - Map user actions to endpoints: "Run cell", "Clear kernel", "Navigate page", "Init page", "Timeout"
   - Document: input/output schemas, status codes, error handling
   - Success: All 5 user actions documented with request/response examples
 
-- [ ] T008 Update agent context for GitHub Copilot (`.github/copilot-context-tech.json`)
+- [X] T008 Update agent context for GitHub Copilot (`.github/copilot-context-tech.json`)
   - Run: `.specify/scripts/powershell/update-agent-context.ps1 -AgentType copilot`
   - Document: Add Thebe, Pyodide, Jupyter Book technologies to copilot context
   - Success: Script runs without errors; context file updated
 
-- [ ] T009 Create developer quickstart walkthrough (`specs/001-thebe-livecode-integration/quickstart.md` - supplement)
+- [X] T009 Create developer quickstart walkthrough (`specs/001-thebe-livecode-integration/quickstart.md` - supplement)
   - Document: Architecture diagrams, phase-by-phase workflow examples, debugging tips
   - Success: Quickstart complete; developers can start Phase A implementation
 

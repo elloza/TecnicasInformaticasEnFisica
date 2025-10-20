@@ -1,3 +1,14 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
 # Tema 03 · Ejercicios propuestos
 
 Fuente: `resources_tif/apuntes_md/practica/Practicas Python Tema 3.md`

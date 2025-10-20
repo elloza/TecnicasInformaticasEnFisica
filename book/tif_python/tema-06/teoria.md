@@ -1,3 +1,14 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
 # Tema 06 · Programación avanzada y análisis de datos
 
 Basado en `resources_tif/apuntes_md/teoria/ProgramacionPythonTIF-Tema6.md`.
