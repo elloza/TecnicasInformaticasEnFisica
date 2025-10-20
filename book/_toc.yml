@@ -10,6 +10,9 @@ parts:
   - caption: Python para TIF
     chapters:
     - file: tif_python/instalacion-vscode.md
+    - file: tif_python/tema-00/teoria.md
+      sections:
+      - file: tif_python/tema-00/ejercicios.md
     - file: tif_python/tema-01/teoria.md
       sections:
       - file: tif_python/tema-01/ejercicios.md
